@@ -33,7 +33,14 @@ export default class ObjectPosition {
      */
     lightbox.on('initialZoomPan', (event) => {
       const slide = event.slide;
-      const [positionX, positionY] = getObjectPosition(getThumbnail(slide.data.element));
+
+      const thumbEl = getThumbnail(slide.data.element)
+
+      if (!thumbEl) {
+        return
+      }
+
+      const [positionX, positionY] = getObjectPosition(thumbEl);
 
       if (positionX !== '50%' && slide.pan.x < 0) {
         slide.pan.x = getCroppedZoomPan(positionX, slide.bounds.min.x, slide.bounds.max.x);
@@ -50,6 +57,11 @@ export default class ObjectPosition {
      */
     lightbox.addFilter('thumbBounds', (thumbBounds, itemData) => {
       const thumbEl = getThumbnail(itemData.element);
+
+      if (!thumbEl) {
+        return thumbBounds
+      }
+
       const thumbAreaRect = thumbEl.getBoundingClientRect();
       const fillZoomLevel = thumbBounds.w / itemData.width;
       const [positionX, positionY] = getObjectPosition(thumbEl);
